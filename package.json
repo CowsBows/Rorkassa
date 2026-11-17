@@ -1,0 +1,19 @@
+{
+  "name": "rorkassa-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Rørkassa som iPhone-app (Capacitor). Appen viser rorkassa.net.",
+  "scripts": {
+    "forbered": "mkdir -p www && cp offline.html www/offline.html && cp start.html www/index.html",
+    "ios:lag": "npm run forbered && npx cap add ios && bash ios-oppsett.sh",
+    "ios:apne": "npx cap open ios",
+    "ios:oppdater": "npm run forbered && npx cap sync ios"
+  },
+  "dependencies": {
+    "@capacitor/core": "^8.0.0",
+    "@capacitor/ios": "^8.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.0.0"
+  }
+}

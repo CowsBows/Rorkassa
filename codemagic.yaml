@@ -1,0 +1,41 @@
+# Codemagic bygger Rørkassa-appen på en Mac i skyen og sender den til TestFlight.
+# API-nøkkelen i Codemagic må hete «Rorkassa» (se LES-MEG.md, steg 7).
+workflows:
+  rorkassa-ios:
+    name: Rørkassa iPhone
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    integrations:
+      app_store_connect: Rorkassa
+    environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: no.rorkassa.app
+      node: latest
+      xcode: latest
+    scripts:
+      - name: Installer pakker
+        script: npm install
+      - name: Lag iPhone-prosjektet
+        script: npm run ios:lag
+      - name: Sett byggnummer
+        script: |
+          sed -i '' "s/CURRENT_PROJECT_VERSION = [0-9]*;/CURRENT_PROJECT_VERSION = $BUILD_NUMBER;/g" ios/App/App.xcodeproj/project.pbxproj
+          plutil -replace CFBundleVersion -string "$BUILD_NUMBER" ios/App/App/Info.plist
+          echo "Byggnummer: $BUILD_NUMBER"
+      - name: Signering
+        script: xcode-project use-profiles --project "ios/App/App.xcodeproj"
+      - name: Bygg appen
+        script: |
+          if [ -d ios/App/App.xcworkspace ]; then
+            xcode-project build-ipa --workspace ios/App/App.xcworkspace --scheme App
+          else
+            xcode-project build-ipa --project ios/App/App.xcodeproj --scheme App
+          fi
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true

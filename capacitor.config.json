@@ -1,0 +1,11 @@
+{
+  "appId": "no.rorkassa.app",
+  "appName": "Rørkassa",
+  "webDir": "www",
+  "backgroundColor": "#203b34",
+  "appendUserAgent": "RorkassaApp",
+  "server": {
+    "url": "https://rorkassa.net",
+    "errorPath": "offline.html"
+  }
+}
